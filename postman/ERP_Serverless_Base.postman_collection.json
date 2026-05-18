@@ -1,0 +1,359 @@
+{
+  "info": {
+    "_postman_id": "a6a44e83-9774-4b7a-9f58-a607db7d7f31",
+    "name": "ERP Serverless Base",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Clientes",
+      "item": [
+        {
+          "name": "Crear cliente",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-api-role", "value": "{{role}}" },
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Juan Perez\",\n  \"email\": \"juan@test.com\",\n  \"telefono\": \"555-1234\",\n  \"direccion\": \"Calle 1\",\n  \"rfc\": \"JUA123456XYZ\"\n}"
+            },
+            "url": "{{baseUrl}}/clientes"
+          }
+        },
+        {
+          "name": "Listar clientes",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-api-role", "value": "{{role}}" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{baseUrl}}/clientes"
+          }
+        },
+        {
+          "name": "Obtener cliente",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-api-role", "value": "{{role}}" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{baseUrl}}/clientes/{{clienteId}}"
+          }
+        },
+        {
+          "name": "Actualizar cliente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "x-api-role", "value": "{{role}}" },
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"telefono\": \"555-9999\",\n  \"direccion\": \"Calle 2\"\n}"
+            },
+            "url": "{{baseUrl}}/clientes/{{clienteId}}"
+          }
+        },
+        {
+          "name": "Eliminar cliente",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "x-api-role", "value": "{{role}}" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{baseUrl}}/clientes/{{clienteId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Productos",
+      "item": [
+        {
+          "name": "Crear producto",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-api-role", "value": "{{role}}" },
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Laptop\",\n  \"descripcion\": \"Laptop HP\",\n  \"precio\": 800,\n  \"stock\": 10,\n  \"categoria\": \"Electronica\"\n}"
+            },
+            "url": "{{baseUrl}}/productos"
+          }
+        },
+        {
+          "name": "Listar productos",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-api-role", "value": "{{role}}" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{baseUrl}}/productos"
+          }
+        },
+        {
+          "name": "Obtener producto",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-api-role", "value": "{{role}}" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{baseUrl}}/productos/{{productoId}}"
+          }
+        },
+        {
+          "name": "Actualizar producto",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "x-api-role", "value": "{{role}}" },
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"precio\": 850,\n  \"stock\": 12\n}"
+            },
+            "url": "{{baseUrl}}/productos/{{productoId}}"
+          }
+        },
+        {
+          "name": "Eliminar producto",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "x-api-role", "value": "{{role}}" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{baseUrl}}/productos/{{productoId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Inventario",
+      "item": [
+        {
+          "name": "Ver inventario",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-api-role", "value": "{{role}}" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{baseUrl}}/inventario"
+          }
+        },
+        {
+          "name": "Ver stock por producto",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-api-role", "value": "{{role}}" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{baseUrl}}/inventario/{{productoId}}"
+          }
+        },
+        {
+          "name": "Registrar movimiento",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-api-role", "value": "{{role}}" },
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productoId\": \"{{productoId}}\",\n  \"tipo\": \"entrada\",\n  \"cantidad\": 5,\n  \"motivo\": \"Ajuste\",\n  \"usuario\": \"admin\"\n}"
+            },
+            "url": "{{baseUrl}}/inventario/movimiento"
+          }
+        },
+        {
+          "name": "Historial movimientos",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-api-role", "value": "{{role}}" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{baseUrl}}/inventario/movimientos"
+          }
+        },
+        {
+          "name": "Alertas stock bajo",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-api-role", "value": "{{role}}" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{baseUrl}}/inventario/alertas?minStock=5"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ventas",
+      "item": [
+        {
+          "name": "Crear venta",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-api-role", "value": "{{role}}" },
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": \"{{clienteId}}\",\n  \"productos\": [\n    {\n      \"productoId\": \"{{productoId}}\",\n      \"cantidad\": 2,\n      \"precioUnitario\": 800\n    }\n  ]\n}"
+            },
+            "url": "{{baseUrl}}/ventas"
+          }
+        },
+        {
+          "name": "Listar ventas",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-api-role", "value": "{{role}}" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{baseUrl}}/ventas"
+          }
+        },
+        {
+          "name": "Obtener venta",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-api-role", "value": "{{role}}" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{baseUrl}}/ventas/{{ventaId}}"
+          }
+        },
+        {
+          "name": "Cancelar venta",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-api-role", "value": "{{role}}" },
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuario\": \"admin\"\n}"
+            },
+            "url": "{{baseUrl}}/ventas/{{ventaId}}/cancelar"
+          }
+        },
+        {
+          "name": "Reporte ventas",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-api-role", "value": "{{role}}" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{baseUrl}}/ventas/reportes"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Compras (extra)",
+      "item": [
+        {
+          "name": "Crear compra",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-api-role", "value": "{{role}}" },
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"proveedor\": \"Proveedor Demo\",\n  \"productos\": [\n    {\n      \"productoId\": \"{{productoId}}\",\n      \"cantidad\": 3,\n      \"precioUnitario\": 700\n    }\n  ]\n}"
+            },
+            "url": "{{baseUrl}}/compras"
+          }
+        },
+        {
+          "name": "Listar compras",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-api-role", "value": "{{role}}" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{baseUrl}}/compras"
+          }
+        },
+        {
+          "name": "Obtener compra",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-api-role", "value": "{{role}}" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": "{{baseUrl}}/compras/{{compraId}}"
+          }
+        },
+        {
+          "name": "Actualizar estado compra",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "x-api-role", "value": "{{role}}" },
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"recibida\"\n}"
+            },
+            "url": "{{baseUrl}}/compras/{{compraId}}/estado"
+          }
+        },
+        {
+          "name": "Recibir compra",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-api-role", "value": "{{role}}" },
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuario\": \"admin\"\n}"
+            },
+            "url": "{{baseUrl}}/compras/{{compraId}}/recibir"
+          }
+        }
+      ]
+    }
+  ]
+}

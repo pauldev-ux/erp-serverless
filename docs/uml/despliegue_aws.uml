@@ -1,0 +1,59 @@
+@startuml
+title ERP Serverless - UML de Despliegue AWS
+
+skinparam shadowing false
+left to right direction
+
+node "Cliente Web / Postman" as Client
+
+node "AWS Region us-east-2" {
+  node "Amazon API Gateway\nREST API /dev" as ApiGw
+
+  node "AWS Lambda" {
+    artifact "productos-function" as FnProd
+    artifact "clientes-function" as FnCli
+    artifact "inventario-function" as FnInv
+    artifact "ventas-function" as FnVen
+    artifact "compras-function" as FnCom
+  }
+
+  database "DynamoDB productos" as TbProd
+  database "DynamoDB clientes" as TbCli
+  database "DynamoDB inventario" as TbInv
+  database "DynamoDB ventas" as TbVen
+  database "DynamoDB compras" as TbCom
+
+  node "Amazon Cognito\nUser Pool" as Cognito
+  node "Amazon CloudWatch Logs" as CwLogs
+}
+
+Client --> ApiGw : HTTPS requests
+Client --> Cognito : Autenticacion
+Cognito --> ApiGw : JWT / claims de rol
+
+ApiGw --> FnProd
+ApiGw --> FnCli
+ApiGw --> FnInv
+ApiGw --> FnVen
+ApiGw --> FnCom
+
+FnProd --> TbProd
+FnCli --> TbCli
+FnInv --> TbInv
+FnInv --> TbProd
+FnVen --> TbVen
+FnVen --> TbCli
+FnVen --> TbProd
+FnVen --> TbInv
+FnCom --> TbCom
+FnCom --> TbProd
+FnCom --> TbInv
+
+FnProd --> CwLogs
+FnCli --> CwLogs
+FnInv --> CwLogs
+FnVen --> CwLogs
+FnCom --> CwLogs
+ApiGw --> CwLogs
+
+@enduml

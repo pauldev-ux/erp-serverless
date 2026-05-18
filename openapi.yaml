@@ -1,0 +1,471 @@
+openapi: 3.0.3
+
+info:
+  title: ERP Serverless API
+  description: |
+    API REST del sistema ERP Serverless desplegado en AWS API Gateway + Lambda + DynamoDB.
+    Incluye módulos de clientes, productos, inventario, compras y ventas.
+    El asistente IA (Gemma 2B via Ollama en EC2) convierte lenguaje natural a
+    llamadas estructuradas sobre estos endpoints usando Tool Actions.
+  version: "1.0.0"
+  contact:
+    name: ERP Serverless Team
+
+servers:
+  - url: https://wc4m2zupe2.execute-api.us-east-2.amazonaws.com/dev
+    description: AWS API Gateway (producción)
+  - url: http://18.231.249.239:11434
+    description: Ollama EC2 – Gemma 2B (inferencia IA)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SECURITY
+# ─────────────────────────────────────────────────────────────────────────────
+components:
+  securitySchemes:
+    ApiRole:
+      type: apiKey
+      in: header
+      name: x-api-role
+    TenantId:
+      type: apiKey
+      in: header
+      name: x-tenant-id
+
+  # ── Schemas reutilizables ──────────────────────────────────────────────────
+  schemas:
+
+    # --- Cliente ---
+    ClienteInput:
+      type: object
+      required: [nombre, apellido]
+      properties:
+        nombre:    { type: string, example: "Maria" }
+        apellido:  { type: string, example: "Lopez" }
+        email:     { type: string, format: email }
+        telefono:  { type: string }
+
+    ClienteOutput:
+      allOf:
+        - $ref: '#/components/schemas/ClienteInput'
+        - type: object
+          properties:
+            id:         { type: string }
+            created_at: { type: string, format: date-time }
+
+    # --- Producto ---
+    ProductoInput:
+      type: object
+      required: [nombre, precio]
+      properties:
+        nombre:   { type: string, example: "Azucar" }
+        precio:   { type: number, example: 20 }
+        moneda:   { type: string, example: "bolivianos" }
+        categoria:{ type: string }
+
+    ProductoOutput:
+      allOf:
+        - $ref: '#/components/schemas/ProductoInput'
+        - type: object
+          properties:
+            id:         { type: string }
+            created_at: { type: string, format: date-time }
+
+    # --- Inventario ---
+    MovimientoInput:
+      type: object
+      required: [producto_id, cantidad, tipo]
+      properties:
+        producto_id: { type: string }
+        cantidad:    { type: number, example: 100 }
+        tipo:        { type: string, enum: [entrada, salida] }
+
+    InventarioOutput:
+      type: object
+      properties:
+        producto_id: { type: string }
+        stock_actual:{ type: number }
+        updated_at:  { type: string, format: date-time }
+
+    # --- Compra ---
+    CompraInput:
+      type: object
+      required: [producto, proveedor, cantidad, precio]
+      properties:
+        producto:  { type: string, example: "arroz" }
+        proveedor: { type: string, example: "ABC" }
+        cantidad:  { type: number, example: 10 }
+        precio:    { type: number, example: 45 }
+        moneda:    { type: string, example: "bolivianos" }
+
+    CompraOutput:
+      allOf:
+        - $ref: '#/components/schemas/CompraInput'
+        - type: object
+          properties:
+            id:     { type: string }
+            estado: { type: string, enum: [pendiente, recibida, cancelada] }
+
+    # --- Venta ---
+    VentaInput:
+      type: object
+      required: [producto, cantidad, precio]
+      properties:
+        producto:  { type: string, example: "arroz" }
+        cantidad:  { type: number, example: 10 }
+        precio:    { type: number, example: 16 }
+        moneda:    { type: string, example: "bolivianos" }
+        cliente_id:{ type: string }
+
+    VentaOutput:
+      allOf:
+        - $ref: '#/components/schemas/VentaInput'
+        - type: object
+          properties:
+            id:         { type: string }
+            created_at: { type: string, format: date-time }
+
+    # --- Tool Action (salida del modelo IA) ---
+    ToolAction:
+      type: object
+      required: [tool, action, payload]
+      description: |
+        Estructura JSON que devuelve el modelo Gemma 2B.
+        Mapea intención de lenguaje natural a una función del ERP.
+      properties:
+        tool:
+          type: string
+          enum: [cliente, producto, inventario, compra, venta, desconocido]
+          description: Módulo ERP objetivo
+        action:
+          type: string
+          description: Acción a ejecutar sobre el módulo
+          example: "crear"
+        payload:
+          type: object
+          description: Parámetros necesarios para ejecutar la acción
+          additionalProperties: true
+
+    ToolActionList:
+      type: array
+      description: Lista de Tool Actions (soporte multi-intención)
+      items:
+        $ref: '#/components/schemas/ToolAction'
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PATHS
+# ─────────────────────────────────────────────────────────────────────────────
+paths:
+
+  # ════════════════════════ CLIENTES ════════════════════════
+  /clientes:
+    get:
+      summary: Listar todos los clientes
+      operationId: listarClientes
+      tags: [Clientes]
+      # Tool Action equivalente: {"tool":"cliente","action":"listar","payload":{}}
+      responses:
+        "200":
+          description: Lista de clientes
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/ClienteOutput' }
+    post:
+      summary: Crear un cliente
+      operationId: crearCliente
+      tags: [Clientes]
+      # Tool Action equivalente: {"tool":"cliente","action":"crear","payload":{nombre,apellido}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ClienteInput' }
+      responses:
+        "201":
+          description: Cliente creado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ClienteOutput' }
+
+  /clientes/{id}:
+    delete:
+      summary: Eliminar un cliente
+      operationId: eliminarCliente
+      tags: [Clientes]
+      # Tool Action equivalente: {"tool":"cliente","action":"eliminar","payload":{id}}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: Cliente eliminado }
+
+  # ════════════════════════ PRODUCTOS ════════════════════════
+  /productos:
+    get:
+      summary: Listar todos los productos
+      operationId: listarProductos
+      tags: [Productos]
+      # Tool Action equivalente: {"tool":"producto","action":"listar","payload":{}}
+      responses:
+        "200":
+          description: Lista de productos
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/ProductoOutput' }
+    post:
+      summary: Crear un producto
+      operationId: crearProducto
+      tags: [Productos]
+      # Tool Action equivalente: {"tool":"producto","action":"crear","payload":{nombre,precio}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ProductoInput' }
+      responses:
+        "201":
+          description: Producto creado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProductoOutput' }
+
+  /productos/{id}:
+    patch:
+      summary: Actualizar precio de un producto
+      operationId: actualizarPrecioProducto
+      tags: [Productos]
+      # Tool Action equivalente: {"tool":"producto","action":"actualizar_precio","payload":{producto,precio}}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                precio: { type: number }
+      responses:
+        "200": { description: Precio actualizado }
+    delete:
+      summary: Eliminar un producto
+      operationId: eliminarProducto
+      tags: [Productos]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: Producto eliminado }
+
+  # ════════════════════════ INVENTARIO ════════════════════════
+  /inventario/movimiento:
+    post:
+      summary: Registrar movimiento de stock (actualizar_stock)
+      operationId: actualizarStock
+      tags: [Inventario]
+      # Tool Action equivalente: {"tool":"inventario","action":"actualizar_stock","payload":{producto,cantidad}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MovimientoInput' }
+      responses:
+        "200":
+          description: Stock actualizado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/InventarioOutput' }
+
+  /inventario/{productoId}:
+    get:
+      summary: Consultar stock de un producto
+      operationId: consultarStock
+      tags: [Inventario]
+      # Tool Action equivalente: {"tool":"inventario","action":"consultar_stock","payload":{producto}}
+      parameters:
+        - name: productoId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Stock del producto
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/InventarioOutput' }
+
+  /inventario/movimientos:
+    get:
+      summary: Listar todos los movimientos de inventario
+      operationId: listarMovimientos
+      tags: [Inventario]
+      responses:
+        "200": { description: Lista de movimientos }
+
+  /inventario/alertas:
+    get:
+      summary: Consultar alertas de stock bajo
+      operationId: listarAlertas
+      tags: [Inventario]
+      responses:
+        "200": { description: Alertas de stock }
+
+  # ════════════════════════ COMPRAS ════════════════════════
+  /compras:
+    get:
+      summary: Listar todas las compras
+      operationId: listarCompras
+      tags: [Compras]
+      # Tool Action equivalente: {"tool":"compra","action":"listar","payload":{}}
+      responses:
+        "200":
+          description: Lista de compras
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/CompraOutput' }
+    post:
+      summary: Registrar una compra
+      operationId: registrarCompra
+      tags: [Compras]
+      # Tool Action equivalente: {"tool":"compra","action":"registrar","payload":{producto,proveedor,cantidad,precio}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CompraInput' }
+      responses:
+        "201":
+          description: Compra registrada
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CompraOutput' }
+
+  /compras/{id}/recibir:
+    post:
+      summary: Marcar compra como recibida
+      operationId: recibirCompra
+      tags: [Compras]
+      # Tool Action equivalente: {"tool":"compra","action":"recibir","payload":{id}}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: Compra marcada como recibida }
+
+  # ════════════════════════ VENTAS ════════════════════════
+  /ventas:
+    get:
+      summary: Listar todas las ventas
+      operationId: listarVentas
+      tags: [Ventas]
+      # Tool Action equivalente: {"tool":"venta","action":"listar","payload":{}}
+      responses:
+        "200":
+          description: Lista de ventas
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/VentaOutput' }
+    post:
+      summary: Registrar una venta
+      operationId: registrarVenta
+      tags: [Ventas]
+      # Tool Action equivalente: {"tool":"venta","action":"registrar","payload":{producto,cantidad,precio}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/VentaInput' }
+      responses:
+        "201":
+          description: Venta registrada
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/VentaOutput' }
+
+  /ventas/{id}/cancelar:
+    post:
+      summary: Cancelar una venta
+      operationId: cancelarVenta
+      tags: [Ventas]
+      # Tool Action equivalente: {"tool":"venta","action":"cancelar","payload":{id}}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: Venta cancelada }
+
+  /ventas/reportes:
+    get:
+      summary: Obtener reporte de ventas
+      operationId: reporteVentas
+      tags: [Ventas]
+      # Tool Action equivalente: {"tool":"venta","action":"reporte","payload":{}}
+      responses:
+        "200": { description: Reporte de ventas }
+
+  # ════════════════════════ IA / OLLAMA ════════════════════════
+  /api/generate:
+    post:
+      summary: Generar respuesta del modelo Gemma 2B (Ollama)
+      operationId: iaGenerate
+      tags: [IA]
+      servers:
+        - url: http://18.231.249.239:11434
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                model:   { type: string, example: "gemma:2b" }
+                prompt:  { type: string }
+                stream:  { type: boolean, example: false }
+                keep_alive: { type: string, example: "10m" }
+                options:
+                  type: object
+                  properties:
+                    temperature: { type: number, example: 0.05 }
+                    num_predict: { type: integer, example: 512 }
+      responses:
+        "200":
+          description: Respuesta del modelo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response: { type: string, description: "JSON Tool Actions generado" }
+                  done:     { type: boolean }
+
+tags:
+  - name: Clientes
+    description: Gestión de clientes del ERP
+  - name: Productos
+    description: Catálogo de productos
+  - name: Inventario
+    description: Control de stock y movimientos
+  - name: Compras
+    description: Registro de compras a proveedores
+  - name: Ventas
+    description: Registro de ventas a clientes
+  - name: IA
+    description: Inferencia con Gemma 2B via Ollama (Tool Actions)

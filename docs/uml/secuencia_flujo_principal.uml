@@ -1,0 +1,60 @@
+@startuml
+title ERP Serverless - Secuencia de Flujo Principal
+
+actor Usuario
+participant "API Gateway" as APIGW
+participant "Lambda Clientes" as LClientes
+participant "Lambda Productos" as LProductos
+participant "Lambda Ventas" as LVentas
+database "DynamoDB Clientes" as DClientes
+database "DynamoDB Productos" as DProductos
+database "DynamoDB Ventas" as DVentas
+database "DynamoDB Inventario" as DInventario
+
+== 1) Crear Cliente ==
+Usuario -> APIGW: POST /clientes
+APIGW -> LClientes: evento HTTP
+LClientes -> DClientes: PutItem(cliente)
+DClientes --> LClientes: ok
+LClientes --> APIGW: 201 cliente creado
+APIGW --> Usuario: respuesta ok
+
+== 2) Crear Producto ==
+Usuario -> APIGW: POST /productos
+APIGW -> LProductos: evento HTTP
+LProductos -> DProductos: PutItem(producto)
+DProductos --> LProductos: ok
+LProductos --> APIGW: 201 producto creado
+APIGW --> Usuario: respuesta ok
+
+== 3) Crear Venta ==
+Usuario -> APIGW: POST /ventas
+APIGW -> LVentas: evento HTTP
+LVentas -> DClientes: GetItem(cliente)
+DClientes --> LVentas: cliente valido
+LVentas -> DProductos: GetItem(producto)
+DProductos --> LVentas: precio y stock
+LVentas -> DInventario: PutItem(movimiento salida)
+DInventario --> LVentas: movimiento ok
+LVentas -> DProductos: UpdateItem(stock - cantidad)
+DProductos --> LVentas: stock actualizado
+LVentas -> DVentas: PutItem(venta)
+DVentas --> LVentas: venta registrada
+LVentas --> APIGW: 201 venta creada
+APIGW --> Usuario: respuesta ok
+
+== 4) Cancelar Venta ==
+Usuario -> APIGW: POST /ventas/{id}/cancelar
+APIGW -> LVentas: evento HTTP
+LVentas -> DVentas: GetItem(venta)
+DVentas --> LVentas: venta existente
+LVentas -> DProductos: UpdateItem(stock + cantidad)
+DProductos --> LVentas: stock restaurado
+LVentas -> DInventario: PutItem(movimiento entrada)
+DInventario --> LVentas: movimiento ok
+LVentas -> DVentas: UpdateItem(estado=cancelada)
+DVentas --> LVentas: venta cancelada
+LVentas --> APIGW: 200 cancelacion exitosa
+APIGW --> Usuario: respuesta ok
+
+@enduml

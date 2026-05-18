@@ -1,0 +1,7 @@
+node_modules
+.aws-sam/
+.appdata/
+deploy_debug.log
+*.pyc
+__pycache__/
+.pytest_cache/

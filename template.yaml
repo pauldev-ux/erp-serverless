@@ -1,0 +1,447 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: ERP Serverless - Gestión de Productos, Clientes, Inventarios, Compras y Ventas
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 512
+    Runtime: python3.11
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        PRODUCTOS_TABLE: !Ref ProductosTable
+        CLIENTES_TABLE: !Ref ClientesTable
+        INVENTARIO_TABLE: !Ref InventarioTable
+        COMPRAS_TABLE: !Ref ComprasTable
+        VENTAS_TABLE: !Ref VentasTable
+        AUTH_ENABLED: 'false'
+        AUTH_PROVIDER: header
+        AUTH_HEADER: x-api-role
+        COGNITO_ROLE_ATTRIBUTE: custom:role
+        TENANCY_MODE: single
+        DEFAULT_TENANT_ID: default
+        TENANT_HEADER: x-tenant-id
+
+Resources:
+  # ============== API GATEWAY ==============
+  ErpApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: dev
+      TracingEnabled: true
+
+  # ============== FUNCIONES LAMBDA - PRODUCTOS ==============
+  ProductosFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: productos-function
+      CodeUri: src/handlers/
+      Handler: productos.lambda_handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ProductosTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - cognito-idp:GetUser
+              Resource: '*'
+      Events:
+        GetProductos:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ErpApi
+            Path: /productos
+            Method: GET
+        
+        PostProducto:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ErpApi
+            Path: /productos
+            Method: POST
+        
+        GetProductoId:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ErpApi
+            Path: /productos/{id}
+            Method: GET
+        
+        PutProducto:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ErpApi
+            Path: /productos/{id}
+            Method: PUT
+        
+        DeleteProducto:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ErpApi
+            Path: /productos/{id}
+            Method: DELETE
+
+  # ============== FUNCIONES LAMBDA - CLIENTES ==============
+  ClientesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: clientes-function
+      CodeUri: src/handlers/
+      Handler: clientes.lambda_handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ClientesTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - cognito-idp:GetUser
+              Resource: '*'
+      Events:
+        GetClientes:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ErpApi
+            Path: /clientes
+            Method: GET
+
+        PostCliente:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ErpApi
+            Path: /clientes
+            Method: POST
+
+        GetClienteId:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ErpApi
+            Path: /clientes/{id}
+            Method: GET
+
+        PutCliente:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ErpApi
+            Path: /clientes/{id}
+            Method: PUT
+
+        DeleteCliente:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ErpApi
+            Path: /clientes/{id}
+            Method: DELETE
+
+  # ============== FUNCIONES LAMBDA - INVENTARIO ==============
+  InventarioFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: inventario-function
+      CodeUri: src/handlers/
+      Handler: inventario.lambda_handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref InventarioTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ProductosTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - cognito-idp:GetUser
+              Resource: '*'
+      Events:
+        GetInventario:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ErpApi
+            Path: /inventario
+            Method: GET
+
+        GetInventarioProducto:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ErpApi
+            Path: /inventario/{productoId}
+            Method: GET
+
+        PostInventarioMovimiento:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ErpApi
+            Path: /inventario/movimiento
+            Method: POST
+
+        GetInventarioMovimientos:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ErpApi
+            Path: /inventario/movimientos
+            Method: GET
+
+        GetInventarioAlertas:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ErpApi
+            Path: /inventario/alertas
+            Method: GET
+
+  # ============== FUNCIONES LAMBDA - COMPRAS ==============
+  ComprasFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: compras-function
+      CodeUri: src/handlers/
+      Handler: compras.lambda_handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ComprasTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ProductosTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref InventarioTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - cognito-idp:GetUser
+              Resource: '*'
+      Events:
+        GetCompras:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ErpApi
+            Path: /compras
+            Method: GET
+
+        PostCompra:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ErpApi
+            Path: /compras
+            Method: POST
+
+        GetCompraId:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ErpApi
+            Path: /compras/{id}
+            Method: GET
+
+        PutCompraEstado:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ErpApi
+            Path: /compras/{id}/estado
+            Method: PUT
+
+        PostCompraRecibir:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ErpApi
+            Path: /compras/{id}/recibir
+            Method: POST
+
+  # ============== FUNCIONES LAMBDA - VENTAS ==============
+  VentasFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: ventas-function
+      CodeUri: src/handlers/
+      Handler: ventas.lambda_handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref VentasTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ProductosTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ClientesTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref InventarioTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - cognito-idp:GetUser
+              Resource: '*'
+      Events:
+        GetVentas:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ErpApi
+            Path: /ventas
+            Method: GET
+
+        PostVenta:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ErpApi
+            Path: /ventas
+            Method: POST
+
+        GetVentaId:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ErpApi
+            Path: /ventas/{id}
+            Method: GET
+
+        PostVentaCancelar:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ErpApi
+            Path: /ventas/{id}/cancelar
+            Method: POST
+
+        GetVentasReportes:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ErpApi
+            Path: /ventas/reportes
+            Method: GET
+
+  # ============== DYNAMODB TABLES ==============
+  ProductosTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: productos
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      Tags:
+        - Key: Modulo
+          Value: Productos
+
+  ClientesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: clientes
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      Tags:
+        - Key: Modulo
+          Value: Clientes
+
+  InventarioTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: inventario
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: productoId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: productoId-index
+          KeySchema:
+            - AttributeName: productoId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+      BillingMode: PROVISIONED
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      Tags:
+        - Key: Modulo
+          Value: Inventario
+
+  ComprasTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: compras
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      Tags:
+        - Key: Modulo
+          Value: Compras
+
+  VentasTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ventas
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      Tags:
+        - Key: Modulo
+          Value: Ventas
+
+  # ============== CLOUDWATCH LOGS ==============
+  ProductosLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${ProductosFunction}'
+      RetentionInDays: 7
+
+  ClientesLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${ClientesFunction}'
+      RetentionInDays: 7
+
+  InventarioLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${InventarioFunction}'
+      RetentionInDays: 7
+
+  ComprasLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${ComprasFunction}'
+      RetentionInDays: 7
+
+  VentasLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${VentasFunction}'
+      RetentionInDays: 7
+
+Outputs:
+  ErpApiEndpoint:
+    Description: API Gateway endpoint URL
+    Value: !Sub 'https://${ErpApi}.execute-api.${AWS::Region}.amazonaws.com/dev'
+  
+  ProductosTableName:
+    Description: Productos DynamoDB Table Name
+    Value: !Ref ProductosTable
+  
+  ClientesTableName:
+    Description: Clientes DynamoDB Table Name
+    Value: !Ref ClientesTable
+  
+  InventarioTableName:
+    Description: Inventario DynamoDB Table Name
+    Value: !Ref InventarioTable
+
+  ComprasTableName:
+    Description: Compras DynamoDB Table Name
+    Value: !Ref ComprasTable
+
+  VentasTableName:
+    Description: Ventas DynamoDB Table Name
+    Value: !Ref VentasTable

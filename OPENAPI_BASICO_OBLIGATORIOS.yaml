@@ -1,0 +1,413 @@
+openapi: 3.0.3
+info:
+  title: ERP Serverless API (Basico)
+  version: 1.0.0
+  description: OpenAPI basico para modulos obligatorios (Productos, Clientes, Inventario, Ventas).
+servers:
+  - url: http://127.0.0.1:3000
+paths:
+  /productos:
+    get:
+      summary: Listar productos
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Crear producto
+      parameters:
+        - in: header
+          name: x-api-role
+          schema:
+            type: string
+          required: false
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductoCreate'
+      responses:
+        '201':
+          description: Creado
+        '400':
+          description: Error de validacion
+        '403':
+          description: Acceso denegado
+  /productos/{id}:
+    get:
+      summary: Obtener producto
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: No encontrado
+    put:
+      summary: Actualizar producto
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: x-api-role
+          schema:
+            type: string
+          required: false
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductoUpdate'
+      responses:
+        '200':
+          description: OK
+        '403':
+          description: Acceso denegado
+        '404':
+          description: No encontrado
+    delete:
+      summary: Eliminar producto
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: x-api-role
+          schema:
+            type: string
+          required: false
+      responses:
+        '200':
+          description: OK
+        '403':
+          description: Acceso denegado
+        '404':
+          description: No encontrado
+
+  /clientes:
+    get:
+      summary: Listar clientes
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Crear cliente
+      parameters:
+        - in: header
+          name: x-api-role
+          schema:
+            type: string
+          required: false
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClienteCreate'
+      responses:
+        '201':
+          description: Creado
+        '400':
+          description: Error de validacion
+        '403':
+          description: Acceso denegado
+  /clientes/{id}:
+    get:
+      summary: Obtener cliente
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: No encontrado
+    put:
+      summary: Actualizar cliente
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: x-api-role
+          schema:
+            type: string
+          required: false
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClienteUpdate'
+      responses:
+        '200':
+          description: OK
+        '403':
+          description: Acceso denegado
+        '404':
+          description: No encontrado
+    delete:
+      summary: Eliminar cliente
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: x-api-role
+          schema:
+            type: string
+          required: false
+      responses:
+        '200':
+          description: OK
+        '403':
+          description: Acceso denegado
+        '404':
+          description: No encontrado
+
+  /inventario:
+    get:
+      summary: Ver inventario completo
+      responses:
+        '200':
+          description: OK
+  /inventario/{productoId}:
+    get:
+      summary: Ver stock por producto
+      parameters:
+        - in: path
+          name: productoId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: No encontrado
+  /inventario/movimiento:
+    post:
+      summary: Registrar movimiento de inventario
+      parameters:
+        - in: header
+          name: x-api-role
+          schema:
+            type: string
+          required: false
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovimientoInventarioCreate'
+      responses:
+        '201':
+          description: Creado
+        '400':
+          description: Error de validacion
+        '403':
+          description: Acceso denegado
+  /inventario/movimientos:
+    get:
+      summary: Historial de movimientos
+      responses:
+        '200':
+          description: OK
+  /inventario/alertas:
+    get:
+      summary: Alertas de stock bajo
+      parameters:
+        - in: query
+          name: minStock
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+
+  /ventas:
+    get:
+      summary: Listar ventas
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Crear venta
+      parameters:
+        - in: header
+          name: x-api-role
+          schema:
+            type: string
+          required: false
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VentaCreate'
+      responses:
+        '201':
+          description: Creado
+        '400':
+          description: Error de validacion
+        '403':
+          description: Acceso denegado
+  /ventas/{id}:
+    get:
+      summary: Obtener venta
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: No encontrado
+  /ventas/{id}/cancelar:
+    post:
+      summary: Cancelar venta y restaurar stock
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: x-api-role
+          schema:
+            type: string
+          required: false
+      requestBody:
+        required: false
+      responses:
+        '200':
+          description: OK
+        '403':
+          description: Acceso denegado
+        '404':
+          description: No encontrado
+  /ventas/reportes:
+    get:
+      summary: Reportes de ventas
+      parameters:
+        - in: header
+          name: x-api-role
+          schema:
+            type: string
+          required: false
+      responses:
+        '200':
+          description: OK
+        '403':
+          description: Acceso denegado
+
+components:
+  schemas:
+    ProductoCreate:
+      type: object
+      required: [nombre, precio, stock]
+      properties:
+        nombre:
+          type: string
+        descripcion:
+          type: string
+        precio:
+          type: number
+        stock:
+          type: integer
+        categoria:
+          type: string
+    ProductoUpdate:
+      type: object
+      properties:
+        nombre:
+          type: string
+        descripcion:
+          type: string
+        precio:
+          type: number
+        stock:
+          type: integer
+        categoria:
+          type: string
+    ClienteCreate:
+      type: object
+      required: [nombre, email, telefono]
+      properties:
+        nombre:
+          type: string
+        email:
+          type: string
+        telefono:
+          type: string
+        direccion:
+          type: string
+        rfc:
+          type: string
+    ClienteUpdate:
+      type: object
+      properties:
+        nombre:
+          type: string
+        email:
+          type: string
+        telefono:
+          type: string
+        direccion:
+          type: string
+        rfc:
+          type: string
+    MovimientoInventarioCreate:
+      type: object
+      required: [productoId, tipo, cantidad]
+      properties:
+        productoId:
+          type: string
+        tipo:
+          type: string
+          enum: [entrada, salida]
+        cantidad:
+          type: integer
+        motivo:
+          type: string
+        usuario:
+          type: string
+    VentaCreate:
+      type: object
+      required: [clienteId, productos]
+      properties:
+        clienteId:
+          type: string
+        usuario:
+          type: string
+        productos:
+          type: array
+          items:
+            type: object
+            required: [productoId, cantidad]
+            properties:
+              productoId:
+                type: string
+              cantidad:
+                type: integer

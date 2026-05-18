@@ -1,0 +1,603 @@
+{
+  "info": {
+    "name": "ERP Serverless",
+    "_postman_id": "erp-serverless-collection-v1",
+    "description": "ERP Serverless - AWS API Gateway + Lambda + DynamoDB",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://wc4m2zupe2.execute-api.us-east-2.amazonaws.com/dev",
+      "type": "string"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.request.headers.upsert({ key: 'Content-Type', value: 'application/json' });",
+          "pm.request.headers.upsert({ key: 'x-api-role', value: 'admin' });",
+          "pm.request.headers.upsert({ key: 'x-tenant-id', value: 'default' });"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "Clientes",
+      "item": [
+        {
+          "name": "Listar clientes",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-api-role", "value": "admin" },
+              { "key": "x-tenant-id", "value": "default" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/clientes",
+              "host": ["{{base_url}}"],
+              "path": ["clientes"]
+            }
+          }
+        },
+        {
+          "name": "Crear cliente",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-api-role", "value": "admin" },
+              { "key": "x-tenant-id", "value": "default" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Juan\",\n  \"apellido\": \"Perez\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/clientes",
+              "host": ["{{base_url}}"],
+              "path": ["clientes"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar cliente",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-api-role", "value": "admin" },
+              { "key": "x-tenant-id", "value": "default" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/clientes/:id",
+              "host": ["{{base_url}}"],
+              "path": ["clientes", ":id"],
+              "variable": [{ "key": "id", "value": "CLIENTE_ID_AQUI" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Productos",
+      "item": [
+        {
+          "name": "Listar productos",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-api-role", "value": "admin" },
+              { "key": "x-tenant-id", "value": "default" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/productos",
+              "host": ["{{base_url}}"],
+              "path": ["productos"]
+            }
+          }
+        },
+        {
+          "name": "Crear producto",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-api-role", "value": "admin" },
+              { "key": "x-tenant-id", "value": "default" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"arroz\",\n  \"precio\": 12,\n  \"stock\": 100,\n  \"moneda\": \"bolivianos\",\n  \"categoria\": \"alimentos\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/productos",
+              "host": ["{{base_url}}"],
+              "path": ["productos"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar precio",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-api-role", "value": "admin" },
+              { "key": "x-tenant-id", "value": "default" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"precio\": 15\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/productos/:id",
+              "host": ["{{base_url}}"],
+              "path": ["productos", ":id"],
+              "variable": [{ "key": "id", "value": "PRODUCTO_ID_AQUI" }]
+            }
+          }
+        },
+        {
+          "name": "Eliminar producto",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-api-role", "value": "admin" },
+              { "key": "x-tenant-id", "value": "default" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/productos/:id",
+              "host": ["{{base_url}}"],
+              "path": ["productos", ":id"],
+              "variable": [{ "key": "id", "value": "PRODUCTO_ID_AQUI" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Inventario",
+      "item": [
+        {
+          "name": "Consultar stock",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-api-role", "value": "admin" },
+              { "key": "x-tenant-id", "value": "default" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/inventario/:productoId",
+              "host": ["{{base_url}}"],
+              "path": ["inventario", ":productoId"],
+              "variable": [{ "key": "productoId", "value": "PRODUCTO_ID_AQUI" }]
+            }
+          }
+        },
+        {
+          "name": "Registrar movimiento entrada",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-api-role", "value": "admin" },
+              { "key": "x-tenant-id", "value": "default" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"producto_id\": \"PRODUCTO_ID_AQUI\",\n  \"cantidad\": 100,\n  \"tipo\": \"entrada\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/inventario/movimiento",
+              "host": ["{{base_url}}"],
+              "path": ["inventario", "movimiento"]
+            }
+          }
+        },
+        {
+          "name": "Listar movimientos",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-api-role", "value": "admin" },
+              { "key": "x-tenant-id", "value": "default" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/inventario/movimientos",
+              "host": ["{{base_url}}"],
+              "path": ["inventario", "movimientos"]
+            }
+          }
+        },
+        {
+          "name": "Alertas stock bajo",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-api-role", "value": "admin" },
+              { "key": "x-tenant-id", "value": "default" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/inventario/alertas",
+              "host": ["{{base_url}}"],
+              "path": ["inventario", "alertas"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Compras",
+      "item": [
+        {
+          "name": "Listar compras",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-api-role", "value": "admin" },
+              { "key": "x-tenant-id", "value": "default" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/compras",
+              "host": ["{{base_url}}"],
+              "path": ["compras"]
+            }
+          }
+        },
+        {
+          "name": "Registrar compra",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-api-role", "value": "admin" },
+              { "key": "x-tenant-id", "value": "default" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"proveedor\": \"ABC Distribuidores\",\n  \"productos\": [\n    {\n      \"productoId\": \"PRODUCTO_ID_AQUI\",\n      \"cantidad\": 50,\n      \"precioUnitario\": 18\n    }\n  ],\n  \"observaciones\": \"Primera compra de prueba\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/compras",
+              "host": ["{{base_url}}"],
+              "path": ["compras"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar estado compra",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-api-role", "value": "admin" },
+              { "key": "x-tenant-id", "value": "default" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"recibida\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/compras/:id/estado",
+              "host": ["{{base_url}}"],
+              "path": ["compras", ":id", "estado"],
+              "variable": [{ "key": "id", "value": "COMPRA_ID_AQUI" }]
+            }
+          }
+        },
+        {
+          "name": "Marcar compra recibida",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-api-role", "value": "admin" },
+              { "key": "x-tenant-id", "value": "default" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/compras/:id/recibir",
+              "host": ["{{base_url}}"],
+              "path": ["compras", ":id", "recibir"],
+              "variable": [{ "key": "id", "value": "COMPRA_ID_AQUI" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ventas",
+      "item": [
+        {
+          "name": "Listar ventas",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-api-role", "value": "admin" },
+              { "key": "x-tenant-id", "value": "default" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/ventas",
+              "host": ["{{base_url}}"],
+              "path": ["ventas"]
+            }
+          }
+        },
+        {
+          "name": "Registrar venta",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-api-role", "value": "admin" },
+              { "key": "x-tenant-id", "value": "default" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": \"CLIENTE_ID_AQUI\",\n  \"productos\": [\n    {\n      \"productoId\": \"PRODUCTO_ID_AQUI\",\n      \"cantidad\": 10\n    }\n  ]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/ventas",
+              "host": ["{{base_url}}"],
+              "path": ["ventas"]
+            }
+          }
+        },
+        {
+          "name": "Registrar venta con cliente",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-api-role", "value": "admin" },
+              { "key": "x-tenant-id", "value": "default" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": \"CLIENTE_ID_AQUI\",\n  \"productos\": [\n    {\n      \"productoId\": \"PRODUCTO_ID_AQUI\",\n      \"cantidad\": 5\n    }\n  ],\n  \"usuario\": \"vendedor1\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/ventas",
+              "host": ["{{base_url}}"],
+              "path": ["ventas"]
+            }
+          }
+        },
+        {
+          "name": "Cancelar venta",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-api-role", "value": "admin" },
+              { "key": "x-tenant-id", "value": "default" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/ventas/:id/cancelar",
+              "host": ["{{base_url}}"],
+              "path": ["ventas", ":id", "cancelar"],
+              "variable": [{ "key": "id", "value": "VENTA_ID_AQUI" }]
+            }
+          }
+        },
+        {
+          "name": "Reporte ventas",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-api-role", "value": "admin" },
+              { "key": "x-tenant-id", "value": "default" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/ventas/reportes",
+              "host": ["{{base_url}}"],
+              "path": ["ventas", "reportes"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🤖 IA - Ollama LOCAL (localhost)",
+      "item": [
+        {
+          "name": "Health check LOCAL",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:11434/api/tags",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "11434",
+              "path": ["api", "tags"]
+            },
+            "description": "Verifica que Ollama esté corriendo localmente y lista los modelos disponibles (incluyendo gemma-erp)."
+          }
+        },
+        {
+          "name": "NLP ERP - Registrar compra",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"gemma-erp\",\n  \"prompt\": \"Extract ERP intent from: 'Register a purchase of rice, 50 units at 20 bolivianos, supplier ABC'. Respond ONLY with JSON: {\\\"intent\\\": \\\"compra_registrar\\\", \\\"producto\\\": \\\"...\\\", \\\"cantidad\\\": N, \\\"precio\\\": N, \\\"proveedor\\\": \\\"...\\\"}\",\n  \"stream\": false\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://localhost:11434/api/generate",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "11434",
+              "path": ["api", "generate"]
+            }
+          }
+        },
+        {
+          "name": "NLP ERP - Registrar venta (español)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"gemma-erp\",\n  \"prompt\": \"Extrae la intención ERP de: 'Registrar venta de arroz 10 unidades para Juan Perez'. Responde SOLO con JSON: {\\\"intent\\\": \\\"venta_registrar\\\", \\\"producto\\\": \\\"...\\\", \\\"cantidad\\\": N, \\\"cliente\\\": \\\"...\\\"}\",\n  \"stream\": false\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://localhost:11434/api/generate",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "11434",
+              "path": ["api", "generate"]
+            }
+          }
+        },
+        {
+          "name": "NLP ERP - Crear producto",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"gemma-erp\",\n  \"prompt\": \"Extrae la intención ERP de: 'Crear producto arroz precio Bs 20 stock 100'. Responde SOLO con JSON: {\\\"intent\\\": \\\"producto_crear\\\", \\\"nombre\\\": \\\"...\\\", \\\"precio\\\": N, \\\"stock\\\": N}\",\n  \"stream\": false\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://localhost:11434/api/generate",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "11434",
+              "path": ["api", "generate"]
+            }
+          }
+        },
+        {
+          "name": "NLP ERP - Listar productos",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"gemma-erp\",\n  \"prompt\": \"Classify this ERP command: 'Show me all products'. Respond ONLY with JSON: {\\\"intent\\\": \\\"producto_listar\\\", \\\"action\\\": \\\"listar\\\"}\",\n  \"stream\": false\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://localhost:11434/api/generate",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "11434",
+              "path": ["api", "generate"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "item": [
+        {
+          "name": "Health check - Modelos disponibles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://18.231.249.239:11434/api/tags",
+              "protocol": "http",
+              "host": ["18.231.249.239"],
+              "port": "11434",
+              "path": ["api", "tags"]
+            },
+            "description": "Verifica que Ollama esté corriendo en EC2 y lista los modelos disponibles."
+          }
+        },
+        {
+          "name": "Generar respuesta NLP - ERP",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"gemma:2b\",\n  \"prompt\": \"You are an ERP assistant. Extract the intent and entities from this command and respond ONLY with valid JSON. Command: 'Register a purchase of rice, 50 units at 20 bolivianos each, supplier ABC'. Respond with: {\\\"intent\\\": \\\"compra_registrar\\\", \\\"producto\\\": \\\"...\\\", \\\"cantidad\\\": N, \\\"precio\\\": N, \\\"proveedor\\\": \\\"...\\\"}\",\n  \"stream\": false\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://18.231.249.239:11434/api/generate",
+              "protocol": "http",
+              "host": ["18.231.249.239"],
+              "port": "11434",
+              "path": ["api", "generate"]
+            },
+            "description": "Prueba el modelo Gemma 2B con un comando ERP en inglés. El modelo extrae intención y entidades."
+          }
+        },
+        {
+          "name": "Generar respuesta NLP - ERP (Español)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"gemma:2b\",\n  \"prompt\": \"Eres un asistente ERP. Extrae la intención y entidades de este comando y responde SOLO con JSON válido. Comando: 'Registrar venta de arroz 10 unidades para Juan Perez'. Responde con: {\\\"intent\\\": \\\"venta_registrar\\\", \\\"producto\\\": \\\"...\\\", \\\"cantidad\\\": N, \\\"cliente\\\": \\\"...\\\"}\",\n  \"stream\": false\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://18.231.249.239:11434/api/generate",
+              "protocol": "http",
+              "host": ["18.231.249.239"],
+              "port": "11434",
+              "path": ["api", "generate"]
+            },
+            "description": "Prueba el modelo Gemma 2B con un comando ERP en español."
+          }
+        },
+        {
+          "name": "Generar respuesta NLP - Listar productos",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"gemma:2b\",\n  \"prompt\": \"You are an ERP assistant. Classify this command and respond ONLY with JSON. Command: 'Show me all products'. Expected format: {\\\"intent\\\": \\\"producto_listar\\\", \\\"action\\\": \\\"listar\\\"}\",\n  \"stream\": false\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://18.231.249.239:11434/api/generate",
+              "protocol": "http",
+              "host": ["18.231.249.239"],
+              "port": "11434",
+              "path": ["api", "generate"]
+            },
+            "description": "Prueba clasificación de intención simple con el modelo Gemma 2B."
+          }
+        }
+      ]
+    }
+  ]
+}

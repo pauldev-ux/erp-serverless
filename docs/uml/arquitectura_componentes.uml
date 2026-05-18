@@ -1,0 +1,59 @@
+@startuml
+title ERP Serverless - Arquitectura UML (Componentes)
+
+skinparam componentStyle rectangle
+skinparam shadowing false
+left to right direction
+
+actor "Usuario / Cliente API" as User
+
+node "AWS Cloud" {
+  component "API Gateway\nREST API (stage: dev)" as APIGW
+
+  package "AWS Lambda" {
+    component "Lambda Productos" as LProductos
+    component "Lambda Clientes" as LClientes
+    component "Lambda Inventario" as LInventario
+    component "Lambda Ventas" as LVentas
+    component "Lambda Compras (extra)" as LCompras
+  }
+
+  database "DynamoDB\nproductos" as DProductos
+  database "DynamoDB\nclientes" as DClientes
+  database "DynamoDB\ninventario" as DInventario
+  database "DynamoDB\nventas" as DVentas
+  database "DynamoDB\ncompras" as DCompras
+
+  component "Cognito User Pool\n(custom:role)" as Cognito
+}
+
+User --> APIGW : HTTP REST
+User --> Cognito : Login / Token
+Cognito --> APIGW : Claims de rol
+
+APIGW --> LProductos
+APIGW --> LClientes
+APIGW --> LInventario
+APIGW --> LVentas
+APIGW --> LCompras
+
+LProductos --> DProductos
+LClientes --> DClientes
+LInventario --> DInventario
+LInventario --> DProductos
+LVentas --> DVentas
+LVentas --> DClientes
+LVentas --> DProductos
+LVentas --> DInventario
+LCompras --> DCompras
+LCompras --> DProductos
+LCompras --> DInventario
+
+note bottom of LVentas
+Flujo clave:
+1) validar cliente y stock
+2) registrar venta
+3) descontar/restaurar inventario
+end note
+
+@enduml
