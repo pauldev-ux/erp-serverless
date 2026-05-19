@@ -8,6 +8,7 @@ on:
 jobs:
   build-apk:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -15,25 +16,22 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'stable'
-
-      - name: Enable Android SDK licenses
-        run: |
-          yes | sdkmanager --licenses || true
+          channel: stable
 
       - name: Install dependencies
-        run: |
-          flutter pub get
+        working-directory: mobile_app
+        run: flutter pub get
 
-      - name: Build release APK (universal)
-        run: |
-          flutter build apk --release
+      - name: Build release APK
+        working-directory: mobile_app
+        run: flutter build apk --release
 
       - name: List build output
+        working-directory: mobile_app
         run: ls -la build/app/outputs/flutter-apk || true
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: flutter-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: mobile_app/build/app/outputs/flutter-apk/app-release.apk
