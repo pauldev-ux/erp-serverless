@@ -149,7 +149,7 @@ class _IaChatScreenState extends State<IaChatScreen> {
         backgroundColor: const Color(0xFF1E1E2E),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Row(children: [
-          const Icon(Icons.electric_bolt_rounded, color: Color(0xFF6C63FF), size: 20),
+          const Icon(Icons.electric_bolt_rounded, color: Color(0xFF2AB7CA), size: 20),
           const SizedBox(width: 8),
           Flexible(child: Text(
             acciones.length > 1 ? 'Ejecutar ${acciones.length} acciones' : 'Ejecutar acción',
@@ -185,7 +185,7 @@ class _IaChatScreenState extends State<IaChatScreen> {
           ElevatedButton.icon(
             onPressed: () => Navigator.pop(context, true),
             icon: const Icon(Icons.play_arrow_rounded, size: 18),
-            label: Text('Ejecutar', style: GoogleFonts.inter(fontWeight: FontWeight.w700)),
+            label: Text('Ejecutar acción', style: GoogleFonts.inter(fontWeight: FontWeight.w700)),
           ),
         ],
       ),
@@ -240,23 +240,24 @@ class _IaChatScreenState extends State<IaChatScreen> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Row(mainAxisSize: MainAxisSize.min, children: [
-          const Text('🤖 '),
+          const Icon(Icons.smart_toy_rounded),
+          const SizedBox(width: 8),
           Flexible(
-            child: Text('Asistente IA',
+            child: Text('Agente ReAct IA',
                 style: GoogleFonts.inter(fontWeight: FontWeight.w700),
                 overflow: TextOverflow.ellipsis),
           ),
           const SizedBox(width: 8),
           _checkingHealth
               ? const SizedBox(width: 10, height: 10, child: CircularProgressIndicator(strokeWidth: 2))
-              : Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: _iaOnline ? const Color(0xFF1A3A2A) : const Color(0xFF3A1A1A),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                        color: (_iaOnline ? const Color(0xFF2ECC71) : const Color(0xFFE74C3C)).withOpacity(0.4)),
-                  ),
+              Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: _iaOnline ? const Color(0xFF072033) : const Color(0xFF3A1A1A),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                            color: (_iaOnline ? const Color(0xFF2ECC71) : const Color(0xFFE74C3C)).withOpacity(0.4)),
+                      ),
                   child: Row(mainAxisSize: MainAxisSize.min, children: [
                     Container(
                         width: 5, height: 5,
@@ -265,10 +266,10 @@ class _IaChatScreenState extends State<IaChatScreen> {
                             shape: BoxShape.circle)),
                     const SizedBox(width: 4),
                     Text(_iaOnline ? 'Online' : 'Offline',
-                        style: GoogleFonts.inter(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            color: _iaOnline ? const Color(0xFF2ECC71) : const Color(0xFFE74C3C))),
+                            style: GoogleFonts.inter(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: _iaOnline ? const Color(0xFF2ECC71) : const Color(0xFFE74C3C))),
                   ]),
                 ),
         ]),
@@ -368,12 +369,12 @@ class _IaChatScreenState extends State<IaChatScreen> {
       padding: const EdgeInsets.all(24),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         const SizedBox(height: 16),
-        const Text('🤖', style: TextStyle(fontSize: 64)),
+        const Icon(Icons.smart_toy_rounded, size: 64, color: Colors.white),
         const SizedBox(height: 12),
         Text(
-          _service.modoActivo == IaMode.local
-              ? 'Asistente ERP — NLP Local'
-              : 'Asistente ERP con Gemma 2B',
+            _service.modoActivo == IaMode.local
+              ? 'Agente ReAct IA — NLP Local'
+              : 'Agente ReAct IA con Gemma 2B',
           style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w700, color: Colors.white),
           textAlign: TextAlign.center,
         ),
@@ -394,10 +395,10 @@ class _IaChatScreenState extends State<IaChatScreen> {
             border: Border.all(color: Colors.white.withOpacity(0.08)),
           ),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('Módulos disponibles:',
+                Text('Módulos disponibles:',
                 style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w600, color: const Color(0xFF8A8AA0))),
             const SizedBox(height: 8),
-            ...[
+                ...[
               ('🧑', 'cliente', 'crear, listar, eliminar'),
               ('📦', 'producto', 'crear, listar, actualizar precio'),
               ('🏭', 'inventario', 'actualizar stock, consultar stock'),
@@ -408,7 +409,7 @@ class _IaChatScreenState extends State<IaChatScreen> {
               child: Row(children: [
                 Text(t.$1, style: const TextStyle(fontSize: 13)),
                 const SizedBox(width: 6),
-                Text('${t.$2} → ', style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w600, color: const Color(0xFF6C63FF))),
+                Text('${t.$2} → ', style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w600, color: const Color(0xFF2AB7CA))),
                 Expanded(child: Text(t.$3, style: GoogleFonts.inter(fontSize: 11, color: const Color(0xFF8A8AA0)))),
               ]),
             )),
@@ -489,18 +490,18 @@ class _IaChatScreenState extends State<IaChatScreen> {
         GestureDetector(
           onTap: _cargando ? null : _enviar,
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            width: 44, height: 44,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(colors: _cargando
-                  ? [const Color(0xFF4A4A6A), const Color(0xFF4A4A6A)]
-                  : [const Color(0xFF6C63FF), const Color(0xFF9B3FBF)]),
-              borderRadius: BorderRadius.circular(12),
+              duration: const Duration(milliseconds: 200),
+              width: 48, height: 48,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: _cargando
+                    ? [const Color(0xFF2A4A5A), const Color(0xFF2A4A5A)]
+                    : [const Color(0xFF0B2447), const Color(0xFF2AB7CA)]),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: _cargando
+                  ? const Center(child: SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)))
+                  : const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 20),
             ),
-            child: _cargando
-                ? const Center(child: SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)))
-                : const Icon(Icons.send_rounded, color: Colors.white, size: 20),
-          ),
         ),
       ]),
     );
@@ -524,8 +525,8 @@ class _MessageBubble extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: Colors.white.withOpacity(0.08)),
           ),
-          child: Row(mainAxisSize: MainAxisSize.min, children: [
-            const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF6C63FF))),
+            child: Row(mainAxisSize: MainAxisSize.min, children: [
+            const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF2AB7CA))),
             const SizedBox(width: 12),
             Text('Procesando...', style: GoogleFonts.inter(fontSize: 13, color: const Color(0xFF8A8AA0))),
           ]),
@@ -543,7 +544,7 @@ class _MessageBubble extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 12, left: 60),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            gradient: const LinearGradient(colors: [Color(0xFF6C63FF), Color(0xFF9B3FBF)]),
+            gradient: const LinearGradient(colors: [Color(0xFF0B2447), Color(0xFF2AB7CA)]),
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(16),
               topRight: Radius.circular(16),
@@ -615,7 +616,7 @@ class _MessageBubble extends StatelessWidget {
             bottomLeft: Radius.circular(16),
             bottomRight: Radius.circular(16),
           ),
-          border: Border.all(color: const Color(0xFF6C63FF).withOpacity(0.3)),
+          border: Border.all(color: const Color(0xFF2AB7CA).withOpacity(0.3)),
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           if (message.hasStructuredData) ...[
@@ -725,45 +726,74 @@ class _MessageBubble extends StatelessWidget {
   }
 
   Widget _buildJsonView(Map<String, dynamic> json) {
-    final tool = json['tool'] ?? '';
-    final action = json['action'] ?? '';
+    final tool = (json['tool'] ?? '').toString();
+    final action = (json['action'] ?? '').toString();
     final payload = json['payload'] as Map<String, dynamic>? ?? {};
 
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      _jsonRow('tool', tool, const Color(0xFF3498DB)),
-      const SizedBox(height: 4),
-      _jsonRow('action', action, const Color(0xFF2ECC71)),
-      if (payload.isNotEmpty) ...[
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: const Color(0xFF13131F),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('payload:',
-                style: GoogleFonts.jetBrainsMono(
-                    fontSize: 11, color: const Color(0xFF8A8AA0))),
-            const SizedBox(height: 4),
-            ...payload.entries.map((e) => Padding(
-                  padding: const EdgeInsets.only(left: 12, top: 2),
-                  child: RichText(
-                    text: TextSpan(children: [
-                      TextSpan(
-                          text: '  ${e.key}: ',
-                          style: GoogleFonts.jetBrainsMono(
-                              fontSize: 11, color: const Color(0xFF8A8AA0))),
-                      TextSpan(
-                          text: '"${e.value}"',
-                          style: GoogleFonts.jetBrainsMono(
-                              fontSize: 11, color: const Color(0xFFE67E22))),
-                    ]),
-                  ),
-                )),
-          ]),
+    String _methodFor(String a) {
+      final la = a.toLowerCase();
+      if (la.contains('crear') || la.contains('registrar') || la.contains('crear_producto') || la.contains('crear')) return 'POST';
+      if (la.contains('listar')) return 'GET';
+      if (la.contains('actualizar') || la.contains('actualizar_precio') || la.contains('actualizar_stock')) return 'PUT';
+      if (la.contains('eliminar') || la.contains('borrar')) return 'DELETE';
+      return 'POST';
+    }
+
+    String _endpointFor(String t) {
+      final tt = t.toLowerCase();
+      if (tt.contains('producto')) return '/productos';
+      if (tt.contains('cliente')) return '/clientes';
+      if (tt.contains('compra')) return '/compras';
+      if (tt.contains('venta')) return '/ventas';
+      if (tt.contains('inventario')) return '/inventario';
+      return '/';
+    }
+
+    final method = _methodFor(action);
+    final endpoint = _endpointFor(tool);
+
+    Widget card(String title, Widget child, {Color? color}) {
+      return Container(
+        width: double.infinity,
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: const Color(0xFF0F2336),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.white.withOpacity(0.03)),
         ),
-      ],
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(title, style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w800, color: color ?? const Color(0xFF2AB7CA))),
+          const SizedBox(height: 8),
+          child,
+        ]),
+      );
+    }
+
+    final thoughtText = 'Intención detectada: $action sobre $tool';
+    final actionWidget = Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text('$method $endpoint', style: GoogleFonts.jetBrainsMono(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w700)),
+      const SizedBox(height: 6),
+      Text('Headers: x-api-role: admin${method == 'POST' ? ', Content-Type: application/json' : ''}', style: GoogleFonts.jetBrainsMono(fontSize: 12, color: const Color(0xFF8A8AA0))),
+    ]);
+
+    final observationWidget = payload.isNotEmpty
+        ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: payload.entries.map((e) => Padding(
+            padding: const EdgeInsets.only(bottom: 6),
+            child: Row(children: [
+              Expanded(child: Text('${e.key}:', style: GoogleFonts.jetBrainsMono(fontSize: 12, color: const Color(0xFF8A8AA0)))),
+              Expanded(child: Text('${e.value}', style: GoogleFonts.jetBrainsMono(fontSize: 12, color: Colors.white))),
+            ]),
+          )).toList())
+        : Text('No aplica', style: GoogleFonts.inter(color: const Color(0xFF8A8AA0)));
+
+    final finalAnswer = Text('Preparado para ejecutar la acción en el ERP.', style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.w700));
+
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      card('Thought', Text(thoughtText, style: GoogleFonts.inter(color: Colors.white))),
+      card('Action', actionWidget),
+      card('Observation', observationWidget),
+      card('Final Answer', finalAnswer, color: const Color(0xFF2AB7CA)),
     ]);
   }
 

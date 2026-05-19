@@ -53,13 +53,13 @@ class HomeScreen extends StatelessWidget {
       title: Row(
         children: [
           Container(
-            width: 32,
-            height: 32,
+            width: 36,
+            height: 36,
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFF6C63FF), Color(0xFF9B59B6)],
+                colors: [Color(0xFF0B2447), Color(0xFF2AB7CA)],
               ),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(10),
             ),
             child: const Icon(Icons.dashboard_rounded, size: 18, color: Colors.white),
           ),
@@ -75,36 +75,36 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       actions: [
-        Container(
-          margin: const EdgeInsets.only(right: 16),
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          decoration: BoxDecoration(
-            color: const Color(0xFF1A3A2A),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: const Color(0xFF2ECC71).withOpacity(0.4)),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 6,
-                height: 6,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF2ECC71),
-                  shape: BoxShape.circle,
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: const Color(0xFF072033),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: const Color(0xFF2AB7CA).withOpacity(0.3)),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 6,
+                  height: 6,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF2AB7CA),
+                    shape: BoxShape.circle,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 6),
-              Text(
-                'AWS',
-                style: GoogleFonts.inter(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF2ECC71),
+                const SizedBox(width: 8),
+                Text(
+                  'AWS',
+                  style: GoogleFonts.inter(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF2AB7CA),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
       ],
     );
   }
@@ -147,14 +147,14 @@ class HomeScreen extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-            colors: [Color(0xFF6C63FF), Color(0xFF9B3FBF)],
+            colors: [Color(0xFF0B2447), Color(0xFF2AB7CA)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF6C63FF).withOpacity(0.4),
+              color: const Color(0xFF0B2447).withOpacity(0.35),
               blurRadius: 20,
               offset: const Offset(0, 8),
             ),
@@ -201,25 +201,37 @@ class HomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 14),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Text(
-                      'Abrir Chat IA →',
-                      style: GoogleFonts.inter(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFF6C63FF),
+                    child: Row(children: [
+                      const Icon(Icons.smart_toy_rounded, size: 16, color: Color(0xFF0B2447)),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Agente ReAct IA',
+                        style: GoogleFonts.inter(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w800,
+                          color: const Color(0xFF0B2447),
+                        ),
                       ),
-                    ),
+                    ]),
                   ),
                 ],
               ),
             ),
             const SizedBox(width: 16),
-            const Text('🤖', style: TextStyle(fontSize: 64)),
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: const Icon(Icons.smart_toy_rounded, size: 38, color: Colors.white),
+            ),
           ],
         ),
       ),

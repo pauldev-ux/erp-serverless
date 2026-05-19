@@ -85,7 +85,7 @@ class _ProductosScreenState extends State<ProductosScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Productos'),
+        title: const Text('Consultar productos'),
         leading: const BackButton(),
         actions: [
           IconButton(icon: const Icon(Icons.refresh_rounded), onPressed: _cargar),
@@ -99,8 +99,8 @@ class _ProductosScreenState extends State<ProductosScreen> {
           );
           if (result == true) _cargar();
         },
-        icon: const Icon(Icons.add),
-        label: Text('Nuevo', style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
+        icon: const Icon(Icons.add_rounded),
+        label: Text('Registrar producto', style: GoogleFonts.inter(fontWeight: FontWeight.w700)),
       ),
       body: Column(
         children: [
@@ -109,7 +109,7 @@ class _ProductosScreenState extends State<ProductosScreen> {
             child: TextField(
               onChanged: (v) => setState(() => _search = v),
               decoration: const InputDecoration(
-                hintText: 'Buscar producto...',
+                hintText: 'Consultar productos...',
                 prefixIcon: Icon(Icons.search_rounded, color: Color(0xFF8A8AA0)),
               ),
             ),
@@ -231,7 +231,7 @@ class _ProductoCard extends StatelessWidget {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 onSelected: (v) { if (v == 'edit') onEdit(); else onDelete(); },
                 itemBuilder: (_) => [
-                  PopupMenuItem(value: 'edit', child: Row(children: [const Icon(Icons.edit_rounded, size: 16, color: Color(0xFF6C63FF)), const SizedBox(width: 8), Text('Editar', style: GoogleFonts.inter(color: Colors.white))])),
+                  PopupMenuItem(value: 'edit', child: Row(children: [const Icon(Icons.edit_rounded, size: 16, color: Color(0xFF2AB7CA)), const SizedBox(width: 8), Text('Editar', style: GoogleFonts.inter(color: Colors.white))])),
                   PopupMenuItem(value: 'delete', child: Row(children: [const Icon(Icons.delete_rounded, size: 16, color: Color(0xFFE74C3C)), const SizedBox(width: 8), Text('Eliminar', style: GoogleFonts.inter(color: Colors.white))])),
                 ],
               ),
@@ -255,7 +255,7 @@ class _ProductoCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withOpacity(0.08),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Column(

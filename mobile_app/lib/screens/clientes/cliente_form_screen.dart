@@ -76,7 +76,7 @@ class _ClienteFormScreenState extends State<ClienteFormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_esEdicion ? 'Editar Cliente' : 'Nuevo Cliente'),
+        title: Text(_esEdicion ? 'Editar Cliente' : 'Registrar cliente'),
         leading: const BackButton(),
       ),
       body: Form(
@@ -109,7 +109,7 @@ class _ClienteFormScreenState extends State<ClienteFormScreen> {
                 onPressed: _saving ? null : _guardar,
                 child: _saving
                     ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                    : Text(_esEdicion ? 'Guardar cambios' : 'Crear cliente'),
+                      : Text(_esEdicion ? 'Guardar cambios' : 'Registrar cliente'),
               ),
             ),
           ],

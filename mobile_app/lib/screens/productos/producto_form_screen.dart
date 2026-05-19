@@ -79,7 +79,7 @@ class _ProductoFormScreenState extends State<ProductoFormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_esEdicion ? 'Editar Producto' : 'Nuevo Producto'),
+        title: Text(_esEdicion ? 'Editar Producto' : 'Registrar producto'),
         leading: const BackButton(),
       ),
       body: Form(
@@ -116,7 +116,7 @@ class _ProductoFormScreenState extends State<ProductoFormScreen> {
                 onPressed: _saving ? null : _guardar,
                 child: _saving
                     ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                    : Text(_esEdicion ? 'Guardar cambios' : 'Crear producto'),
+                      : Text(_esEdicion ? 'Guardar cambios' : 'Registrar producto'),
               ),
             ),
           ],

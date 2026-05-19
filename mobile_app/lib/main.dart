@@ -26,14 +26,14 @@ class ErpApp extends StatelessWidget {
         useMaterial3: true,
         brightness: Brightness.dark,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF6C63FF),
+          seedColor: const Color(0xFF0B2447),
           brightness: Brightness.dark,
-          primary: const Color(0xFF6C63FF),
-          secondary: const Color(0xFF03DAC6),
-          surface: const Color(0xFF1E1E2E),
-          background: const Color(0xFF13131F),
+          primary: const Color(0xFF0B2447),
+          secondary: const Color(0xFF2AB7CA),
+          surface: const Color(0xFF0F2336),
+          background: const Color(0xFF071028),
         ),
-        scaffoldBackgroundColor: const Color(0xFF13131F),
+        scaffoldBackgroundColor: const Color(0xFF071028),
         textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
         appBarTheme: AppBarTheme(
           backgroundColor: const Color(0xFF1E1E2E),
@@ -47,14 +47,10 @@ class ErpApp extends StatelessWidget {
           iconTheme: const IconThemeData(color: Colors.white),
         ),
         cardTheme: CardThemeData(
-          color: const Color(0xFF1E1E2E),
-          elevation: 0,
+          color: const Color(0xFF0F2336),
+          elevation: 6,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
-            side: BorderSide(
-              color: Colors.white.withOpacity(0.08),
-              width: 1,
-            ),
           ),
         ),
         inputDecorationTheme: InputDecorationTheme(
@@ -72,15 +68,15 @@ class ErpApp extends StatelessWidget {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF6C63FF),
+            backgroundColor: const Color(0xFF0B2447),
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
             textStyle: GoogleFonts.inter(
-              fontWeight: FontWeight.w600,
-              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              fontSize: 16,
             ),
           ),
         ),
